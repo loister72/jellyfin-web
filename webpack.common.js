@@ -237,6 +237,7 @@ const config = {
                     path.resolve(__dirname, 'node_modules/react-blurhash'),
                     path.resolve(__dirname, 'node_modules/react-lazy-load-image-component'),
                     path.resolve(__dirname, 'node_modules/react-router'),
+                    path.resolve(__dirname, 'node_modules/react-router-dom'),
                     path.resolve(__dirname, 'node_modules/remove-accents'),
                     path.resolve(__dirname, 'node_modules/screenfull'),
                     path.resolve(__dirname, 'node_modules/ssr-window'),

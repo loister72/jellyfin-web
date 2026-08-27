@@ -29,6 +29,7 @@ import { queryClient } from 'utils/query/queryClient';
 import { ActionData } from 'types/actionData';
 import { CODECS, HEVC_REXT_DECODING_TYPES, HEVC_VP9_HW_DECODING_TYPES } from 'apps/dashboard/features/playback/constants/codecs';
 import SimpleAlert from 'components/SimpleAlert';
+import { voidSubmit } from 'utils/router/voidSubmit';
 
 const CONFIG_KEY = 'encoding';
 
@@ -106,7 +107,8 @@ export const Component = () => {
         e.preventDefault();
         if (config) {
             setIsAlertOpen(true);
-            submit(
+            voidSubmit(
+                submit,
                 { ...config },
                 { method: 'post', encType: 'application/json' }
             );
