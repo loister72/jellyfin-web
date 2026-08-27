@@ -15,5 +15,14 @@ module.exports = {
         '@babel/preset-react'
     ],
     plugins: [
+    ],
+    overrides: [
+        {
+            test: /node_modules[\\/]react-router[\\/]/,
+            plugins: [
+                '@babel/plugin-transform-modules-commonjs',
+                '@babel/plugin-transform-dynamic-import'
+            ]
+        }
     ]
 };
