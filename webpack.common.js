@@ -48,6 +48,9 @@ const config = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        alias: {
+            'react-router-dom$': path.resolve(__dirname, 'src/utils/router/reactRouterDomCompat.ts')
+        },
         modules: [
             path.resolve(__dirname, 'src'),
             path.resolve(__dirname, 'node_modules')
