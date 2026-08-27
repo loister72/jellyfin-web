@@ -6,6 +6,7 @@ import { ServerConnections } from 'lib/jellyfin-apiclient';
 
 import { appHost } from 'components/apphost';
 import appSettings from 'scripts/settings/appSettings';
+import * as webSettings from 'scripts/settings/webSettings';
 import dom from 'utils/dom';
 import loading from 'components/loading/loading';
 import layoutManager from 'components/layoutManager';
@@ -192,7 +193,15 @@ function loadUserList(context, apiClient, users) {
 }
 
 export default function (view, params) {
-    function getApiClient() {
+    async function getApiClient() {
+        if (!await webSettings.getMultiServer()) {
+            await ServerConnections.connect({
+                enableAutoLogin: false
+            });
+
+            return ServerConnections.currentApiClient();
+        }
+
         const serverId = params.serverid;
 
         if (serverId) {
@@ -224,7 +233,7 @@ export default function (view, params) {
         });
     }
 
-    view.querySelector('#divUsers').addEventListener('click', function (e) {
+    view.querySelector('#divUsers').addEventListener('click', async function (e) {
         const card = dom.parentWithClass(e.target, 'card');
         const cardContent = card ? card.querySelector('.cardContent') : null;
 
@@ -238,7 +247,7 @@ export default function (view, params) {
                 context.querySelector('#txtManualName').value = '';
                 showManualForm(context, true);
             } else if (haspw == 'false') {
-                authenticateUserByName(context, getApiClient(), getTargetUrl(), name, '');
+                authenticateUserByName(context, await getApiClient(), getTargetUrl(), name, '');
             } else {
                 context.querySelector('#txtManualName').value = name;
                 context.querySelector('#txtManualPassword').value = '';
@@ -246,9 +255,9 @@ export default function (view, params) {
             }
         }
     });
-    view.querySelector('.manualLoginForm').addEventListener('submit', function (e) {
+    view.querySelector('.manualLoginForm').addEventListener('submit', async function (e) {
         appSettings.enableAutoLogin(view.querySelector('.chkRememberLogin').checked);
-        authenticateUserByName(view, getApiClient(), getTargetUrl(), view.querySelector('#txtManualName').value, view.querySelector('#txtManualPassword').value);
+        authenticateUserByName(view, await getApiClient(), getTargetUrl(), view.querySelector('#txtManualName').value, view.querySelector('#txtManualPassword').value);
         e.preventDefault();
         return false;
     });
@@ -256,8 +265,8 @@ export default function (view, params) {
         Dashboard.navigate('forgotpassword');
     });
     view.querySelector('.btnCancel').addEventListener('click', showVisualForm);
-    view.querySelector('.btnQuick').addEventListener('click', function () {
-        authenticateQuickConnect(getApiClient(), getTargetUrl());
+    view.querySelector('.btnQuick').addEventListener('click', async function () {
+        authenticateQuickConnect(await getApiClient(), getTargetUrl());
         return false;
     });
     view.querySelector('.btnManual').addEventListener('click', function () {
@@ -268,7 +277,7 @@ export default function (view, params) {
         Dashboard.selectServer();
     });
 
-    view.addEventListener('viewshow', function () {
+    view.addEventListener('viewshow', async function () {
         loading.show();
         libraryMenu.setTransparentMenu(true);
 
@@ -276,7 +285,7 @@ export default function (view, params) {
             view.querySelector('.btnSelectServer').classList.add('hide');
         }
 
-        const apiClient = getApiClient();
+        const apiClient = await getApiClient();
 
         apiClient.getQuickConnect('Enabled')
             .then(enabled => {
@@ -322,4 +331,3 @@ export default function (view, params) {
         libraryMenu.setTransparentMenu(false);
     });
 }
-
