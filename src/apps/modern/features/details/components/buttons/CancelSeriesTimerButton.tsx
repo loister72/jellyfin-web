@@ -8,6 +8,7 @@ import globalize from 'lib/globalize';
 import loading from 'components/loading/loading';
 import toast from 'components/toast/toast';
 import confirm from 'components/confirm/confirm';
+import { voidNavigate } from 'utils/router/voidNavigate';
 
 interface CancelSeriesTimerButtonProps {
     itemId: string;
@@ -36,7 +37,7 @@ const CancelSeriesTimerButton: FC<CancelSeriesTimerButtonProps> = ({
                         onSuccess: async () => {
                             toast(globalize.translate('SeriesCancelled'));
                             loading.hide();
-                            navigate('/livetv');
+                            voidNavigate(navigate, '/livetv');
                         },
                         onError: (err: unknown) => {
                             loading.hide();

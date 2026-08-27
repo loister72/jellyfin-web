@@ -24,6 +24,7 @@ import { ServerConnections } from 'lib/jellyfin-apiclient';
 import { getSystemApi } from '@jellyfin/sdk/lib/utils/api/system-api';
 import { queryClient } from 'utils/query/queryClient';
 import { ActionData } from 'types/actionData';
+import { voidSubmit } from 'utils/router/voidSubmit';
 
 const CONFIG_KEY = 'livetv';
 
@@ -172,7 +173,8 @@ export const Component = () => {
     const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (config) {
-            submit(
+            voidSubmit(
+                submit,
                 JSON.stringify(config),
                 { method: 'post', encType: 'application/json' }
             );

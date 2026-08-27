@@ -10,6 +10,7 @@ import '../../../../components/indicators/indicators.scss';
 import '../../../../styles/flexstyles.scss';
 import Page from '../../../../components/Page';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { voidNavigate } from 'utils/router/voidNavigate';
 import Toast from 'apps/dashboard/components/Toast';
 import { useUsers } from 'hooks/useUsers';
 import Loading from 'components/loading/LoadingComponent';
@@ -88,15 +89,15 @@ const UserProfiles = () => {
                     callback: function (id: string) {
                         switch (id) {
                             case 'open':
-                                navigate(`/dashboard/users/${userId}/${UserTab.Profile}`);
+                                voidNavigate(navigate, `/dashboard/users/${userId}/${UserTab.Profile}`);
                                 break;
 
                             case 'access':
-                                navigate(`/dashboard/users/${userId}/${UserTab.Access}`);
+                                voidNavigate(navigate, `/dashboard/users/${userId}/${UserTab.Access}`);
                                 break;
 
                             case 'parentalcontrol':
-                                navigate(`/dashboard/users/${userId}/${UserTab.ParentalControl}`);
+                                voidNavigate(navigate, `/dashboard/users/${userId}/${UserTab.ParentalControl}`);
                                 break;
 
                             case 'delete':
@@ -138,7 +139,7 @@ const UserProfiles = () => {
         };
 
         const onAddUserClick = function() {
-            navigate('/dashboard/users/add');
+            voidNavigate(navigate, '/dashboard/users/add');
         };
 
         page.addEventListener('click', onPageClick);

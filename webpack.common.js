@@ -48,6 +48,9 @@ const config = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        alias: {
+            'react-router-dom$': path.resolve(__dirname, 'src/utils/router/reactRouterDomCompat.ts')
+        },
         modules: [
             path.resolve(__dirname, 'src'),
             path.resolve(__dirname, 'node_modules')
@@ -185,6 +188,16 @@ const config = {
     module: {
         rules: [
             {
+                enforce: 'pre',
+                test: /\.(js|mjs)$/,
+                include: [
+                    path.resolve(__dirname, 'node_modules/react-router/dist')
+                ],
+                use: [
+                    path.resolve(__dirname, 'build/strip-react-router-dynamic-imports-loader.js')
+                ]
+            },
+            {
                 test: /\.(html)$/,
                 use: {
                     loader: 'html-loader'
@@ -221,6 +234,7 @@ const config = {
                     path.resolve(__dirname, 'node_modules/compare-versions'),
                     path.resolve(__dirname, 'node_modules/date-fns'),
                     path.resolve(__dirname, 'node_modules/dom7'),
+                    path.resolve(__dirname, 'node_modules/dompurify'),
                     path.resolve(__dirname, 'node_modules/epubjs'),
                     path.resolve(__dirname, 'node_modules/flv.js'),
                     path.resolve(__dirname, 'node_modules/highlight-words'),
@@ -236,6 +250,7 @@ const config = {
                     path.resolve(__dirname, 'node_modules/react-blurhash'),
                     path.resolve(__dirname, 'node_modules/react-lazy-load-image-component'),
                     path.resolve(__dirname, 'node_modules/react-router'),
+                    path.resolve(__dirname, 'node_modules/react-router-dom'),
                     path.resolve(__dirname, 'node_modules/remove-accents'),
                     path.resolve(__dirname, 'node_modules/screenfull'),
                     path.resolve(__dirname, 'node_modules/ssr-window'),

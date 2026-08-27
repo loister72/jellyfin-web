@@ -15,6 +15,7 @@ import Access from 'apps/dashboard/features/users/components/Access';
 import ParentalControl from 'apps/dashboard/features/users/components/ParentalControl';
 import Password from 'apps/dashboard/features/users/components/Password';
 import Alert from '@mui/material/Alert';
+import { voidNavigate } from 'utils/router/voidNavigate';
 
 export const Component = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ export const Component = () => {
     const { data: user, isPending, isError } = useUser({ userId });
 
     const handleTabChange = useCallback((event: React.SyntheticEvent, newValue: UserTab) => {
-        navigate(`/dashboard/users/${userId}/${newValue}`);
+        voidNavigate(navigate, `/dashboard/users/${userId}/${newValue}`);
     }, [ navigate ]);
 
     if (isPending) return <Loading />;
