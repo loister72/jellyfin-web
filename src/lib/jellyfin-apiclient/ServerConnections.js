@@ -2,6 +2,7 @@ import { Credentials } from 'jellyfin-apiclient';
 
 import { appHost } from 'components/apphost';
 import appSettings from 'scripts/settings/appSettings';
+import * as webSettings from 'scripts/settings/webSettings';
 import { setUserInfo } from 'scripts/settings/userSettings';
 import { detectBitrate } from 'utils/bitrateTest';
 import Dashboard from 'utils/dashboard';
@@ -28,6 +29,22 @@ const getMaxBandwidth = () => {
     }
 
     return null;
+};
+
+const getSingleServerAddress = async () => {
+    const configuredServers = await webSettings.getServers();
+
+    if (configuredServers.length > 0) {
+        return configuredServers[0];
+    }
+
+    const index = window.location.href.toLowerCase().lastIndexOf('/web');
+
+    if (index !== -1) {
+        return window.location.href.substring(0, index);
+    }
+
+    return window.location.origin;
 };
 
 class ServerConnections extends ConnectionManager {
@@ -82,7 +99,34 @@ class ServerConnections extends ConnectionManager {
     /**
      * @returns {Promise<import('jellyfin-apiclient').ConnectResponse>} The result of the connection attempt.
      */
-    connect(options) {
+    async connect(options) {
+        const isMultiServer = await webSettings.getMultiServer();
+
+        if (!isMultiServer) {
+            const serverAddress = await getSingleServerAddress();
+            const response = await fetch(`${serverAddress}/System/Info/Public`, { cache: 'no-cache' });
+
+            if (response.ok) {
+                const systemInfo = await response.json();
+                const credentials = credentialProvider.credentials();
+                const savedServer = credentials.Servers.find(server => server.Id === systemInfo.Id);
+
+                credentials.Servers = [
+                    {
+                        ...(savedServer || {}),
+                        Id: systemInfo.Id,
+                        Name: systemInfo.ServerName,
+                        LocalAddress: systemInfo.LocalAddress || serverAddress,
+                        ManualAddress: serverAddress,
+                        manualAddressOnly: true
+                    }
+                ];
+                credentialProvider.credentials(credentials);
+                this.localApiClient = null;
+                window.ApiClient = null;
+            }
+        }
+
         return super.connect({
             enableAutoLogin: appSettings.enableAutoLogin(),
             ...options
