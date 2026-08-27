@@ -188,6 +188,16 @@ const config = {
     module: {
         rules: [
             {
+                enforce: 'pre',
+                test: /\.(js|mjs)$/,
+                include: [
+                    path.resolve(__dirname, 'node_modules/react-router/dist')
+                ],
+                use: [
+                    path.resolve(__dirname, 'build/strip-react-router-dynamic-imports-loader.js')
+                ]
+            },
+            {
                 test: /\.(html)$/,
                 use: {
                     loader: 'html-loader'
