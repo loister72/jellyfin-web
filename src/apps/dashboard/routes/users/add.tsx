@@ -16,6 +16,7 @@ import { useChannels } from 'apps/dashboard/features/users/api/useChannels';
 import { useUpdateUserPolicy } from 'apps/dashboard/features/users/api/useUpdateUserPolicy';
 import { useCreateUser } from 'apps/dashboard/features/users/api/useCreateUser';
 import { useNavigate } from 'react-router-dom';
+import { voidNavigate } from 'utils/router/voidNavigate';
 
 type ItemsArr = {
     Name?: string | null;
@@ -160,7 +161,7 @@ const UserNew = () => {
                         userPolicy: user.Policy
                     }, {
                         onSuccess: () => {
-                            navigate(`/dashboard/users/${user.Id}/profile`);
+                            voidNavigate(navigate, `/dashboard/users/${user.Id}/profile`);
                         },
                         onError: () => {
                             console.error('[usernew] failed to update user policy');

@@ -10,6 +10,7 @@ import Input from 'elements/emby-input/Input';
 import globalize from 'lib/globalize';
 import ServerConnections from 'lib/jellyfin-apiclient/ServerConnections';
 import { getAuthenticationApi } from 'utils/sdk/authentication-api';
+import { voidNavigate } from 'utils/router/voidNavigate';
 import { isValidUrl } from 'utils/url';
 import shell from 'scripts/shell';
 
@@ -46,7 +47,9 @@ export const ForgotPasswordPage = () => {
                     if (result.PinFile && isValidUrl(result.PinFile)) {
                         msg = globalize.translate('MessageForgotPasswordRedirect');
                         shell.openUrl(result.PinFile);
-                        callback = () => navigate('/login');
+                        callback = () => {
+                            voidNavigate(navigate, '/login');
+                        };
                     } else {
                         msg = globalize.translate('MessageForgotPasswordFileCreated');
                         msg += '<br/><br/>';
@@ -54,7 +57,9 @@ export const ForgotPasswordPage = () => {
                         msg += '<br/><br/>';
                         msg += result.PinFile;
                         msg += '<br/>';
-                        callback = () => navigate('/forgotpasswordpin');
+                        callback = () => {
+                            voidNavigate(navigate, '/forgotpasswordpin');
+                        };
                     }
                     break;
                 default:
@@ -71,7 +76,7 @@ export const ForgotPasswordPage = () => {
     });
 
     const handleCancel = useCallback(() => {
-        navigate(-1);
+        voidNavigate(navigate, -1);
     }, [navigate]);
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {

@@ -18,6 +18,7 @@ import { useUpdateUser } from 'apps/dashboard/features/users/api/useUpdateUser';
 import { useUpdateUserPolicy } from 'apps/dashboard/features/users/api/useUpdateUserPolicy';
 import { useNetworkConfig } from 'apps/dashboard/features/users/api/useNetworkConfig';
 import Toast from 'apps/dashboard/components/Toast';
+import { voidNavigate } from 'utils/router/voidNavigate';
 
 interface ProfileProps {
     userDto: UserDto;
@@ -256,7 +257,7 @@ const Profile = ({ userDto }: ProfileProps) => {
                         }, {
                             onSuccess: () => {
                                 loading.hide();
-                                navigate('/dashboard/users', {
+                                voidNavigate(navigate, '/dashboard/users', {
                                     state: { openSavedToast: true }
                                 });
                             }

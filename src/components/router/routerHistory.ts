@@ -1,16 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Router, RouterState } from '@remix-run/router';
 import type { History, Listener, To } from 'history';
 
 import Events, { type Event } from 'utils/events';
 
 const HISTORY_UPDATE_EVENT = 'HISTORY_UPDATE';
 
+type RouterState = Pick<History, 'location'> & {
+    historyAction: History['action'];
+};
+
+type RouterCompat = {
+    state: RouterState;
+    createHref: (to: any) => string;
+    navigate: {
+        (to: number): void | Promise<void>;
+        (to: To | null, options?: { replace?: boolean; state?: any }): void | Promise<void>;
+    };
+    subscribe: (callback: (state: RouterState) => void) => () => void;
+};
+
+const handleNavigation = (navigation: void | Promise<void>) => {
+    if (navigation) {
+        navigation.catch(err => {
+            console.error('[RouterHistory] navigation failed', err);
+        });
+    }
+};
+
 export class RouterHistory implements History {
-    _router: Router;
+    _router: RouterCompat;
     createHref: (arg: any) => string;
 
-    constructor(router: Router) {
+    constructor(router: RouterCompat) {
         this._router = router;
 
         this._router.subscribe(state => {
@@ -30,23 +51,23 @@ export class RouterHistory implements History {
     }
 
     back() {
-        void this._router.navigate(-1);
+        handleNavigation(this._router.navigate(-1));
     }
 
     forward() {
-        void this._router.navigate(1);
+        handleNavigation(this._router.navigate(1));
     }
 
     go(delta: number) {
-        void this._router.navigate(delta);
+        handleNavigation(this._router.navigate(delta));
     }
 
     push(to: To, state?: any) {
-        void this._router.navigate(to, { state });
+        handleNavigation(this._router.navigate(to, { state }));
     }
 
     replace(to: To, state?: any): void {
-        void this._router.navigate(to, { state, replace: true });
+        handleNavigation(this._router.navigate(to, { state, replace: true }));
     }
 
     block() {
@@ -66,7 +87,7 @@ export class RouterHistory implements History {
     }
 }
 
-export const createRouterHistory = (router: Router): History => {
+export const createRouterHistory = (router: RouterCompat): History => {
     return new RouterHistory(router);
 };
 

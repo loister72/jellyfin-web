@@ -13,6 +13,7 @@ import globalize from 'lib/globalize';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from 'components/ConfirmDialog';
 import { useDeleteTuner } from '../api/useDeleteTuner';
+import { voidNavigate } from 'utils/router/voidNavigate';
 
 interface TunerDeviceCardProps {
     tunerHost: TunerHostInfo;
@@ -27,7 +28,7 @@ const TunerDeviceCard = ({ tunerHost }: TunerDeviceCardProps) => {
     const deleteTuner = useDeleteTuner();
 
     const navigateToEditPage = useCallback(() => {
-        navigate(`/dashboard/livetv/tuner?id=${tunerHost.Id}`);
+        voidNavigate(navigate, `/dashboard/livetv/tuner?id=${tunerHost.Id}`);
     }, [ navigate, tunerHost ]);
 
     const onDelete = useCallback(() => {

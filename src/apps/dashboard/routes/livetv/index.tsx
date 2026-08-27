@@ -23,6 +23,7 @@ import Alert from '@mui/material/Alert';
 import List from '@mui/material/List';
 import Provider from 'apps/dashboard/features/livetv/components/Provider';
 import Grid from '@mui/material/Grid';
+import { voidNavigate } from 'utils/router/voidNavigate';
 
 const CONFIG_KEY = 'livetv';
 
@@ -44,11 +45,11 @@ export const Component = () => {
     const startTask = useStartTask();
 
     const navigateToSchedulesDirect = useCallback(() => {
-        navigate('/dashboard/livetv/guide?type=schedulesdirect');
+        voidNavigate(navigate, '/dashboard/livetv/guide?type=schedulesdirect');
     }, [ navigate ]);
 
     const navigateToXMLTV = useCallback(() => {
-        navigate('/dashboard/livetv/guide?type=xmltv');
+        voidNavigate(navigate, '/dashboard/livetv/guide?type=xmltv');
     }, [ navigate ]);
 
     const showProviderMenu = useCallback(() => {
