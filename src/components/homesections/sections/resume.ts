@@ -6,12 +6,12 @@ import type { ApiClient } from 'jellyfin-apiclient';
 
 import { getResumeItemsQuery } from 'apps/legacy/features/libraries/api/useResumeItems';
 import cardBuilder from 'components/cardbuilder/cardBuilder';
-import { getBackdropShape, getPortraitShape } from 'components/cardbuilder/utils/shape';
 import globalize from 'lib/globalize';
 import ServerConnections from 'lib/jellyfin-apiclient/ServerConnections';
 import { queryClient } from 'utils/query/queryClient';
 import type { UserSettings } from 'scripts/settings/userSettings';
 
+import { getResumeCardOptions } from './cardOptions';
 import type { SectionContainerElement, SectionOptions } from './section';
 
 const dataMonitorHints: Record<string, string> = {
@@ -31,7 +31,12 @@ function getItemsToResumeFn(
         const options = {
             userId: apiClient.getCurrentUserId(),
             limit,
-            fields: [ ItemFields.PrimaryImageAspectRatio ],
+            fields: [
+                ItemFields.PrimaryImageAspectRatio,
+                ItemFields.DateCreated,
+                ItemFields.Path,
+                ItemFields.MediaSourceCount
+            ],
             imageTypeLimit: 1,
             enableImageTypes: [
                 ImageType.Primary,
@@ -53,26 +58,9 @@ function getItemsToResumeHtmlFn(
     { enableOverflow }: SectionOptions
 ) {
     return function (items: BaseItemDto[]) {
-        const cardLayout = false;
         return cardBuilder.getCardsHtml({
             items: items,
-            preferThumb: true,
-            inheritThumb: !useEpisodeImages,
-            shape: (mediaType === 'Book') ?
-                getPortraitShape(enableOverflow) :
-                getBackdropShape(enableOverflow),
-            overlayText: false,
-            showTitle: true,
-            showParentTitle: true,
-            lazy: true,
-            showDetailsMenu: true,
-            overlayPlayButton: true,
-            context: 'home',
-            centerText: !cardLayout,
-            allowBottomPadding: false,
-            cardLayout: cardLayout,
-            showYear: true,
-            lines: 2
+            ...getResumeCardOptions(useEpisodeImages, mediaType, { enableOverflow })
         });
     };
 }
