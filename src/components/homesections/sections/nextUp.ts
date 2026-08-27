@@ -5,7 +5,6 @@ import type { ApiClient } from 'jellyfin-apiclient';
 
 import { getNextUpQuery } from 'apps/legacy/features/libraries/api/useNextUp';
 import cardBuilder from 'components/cardbuilder/cardBuilder';
-import { getBackdropShape } from 'components/cardbuilder/utils/shape';
 import layoutManager from 'components/layoutManager';
 import { appRouter } from 'components/router/appRouter';
 import globalize from 'lib/globalize';
@@ -14,6 +13,7 @@ import type { UserSettings } from 'scripts/settings/userSettings';
 import { toIsoDateOnlyString } from 'utils/date';
 import { queryClient } from 'utils/query/queryClient';
 
+import { getNextUpCardOptions } from './cardOptions';
 import type { SectionContainerElement, SectionOptions } from './section';
 
 function getNextUpFetchFn(
@@ -54,21 +54,9 @@ function getNextUpItemsHtmlFn(
     { enableOverflow }: SectionOptions
 ) {
     return function (items: BaseItemDto[]) {
-        const cardLayout = false;
         return cardBuilder.getCardsHtml({
             items: items,
-            preferThumb: true,
-            inheritThumb: !useEpisodeImages,
-            shape: getBackdropShape(enableOverflow),
-            overlayText: false,
-            showTitle: true,
-            showParentTitle: true,
-            lazy: true,
-            overlayPlayButton: true,
-            context: 'home',
-            centerText: !cardLayout,
-            allowBottomPadding: !enableOverflow,
-            cardLayout: cardLayout
+            ...getNextUpCardOptions(useEpisodeImages, { enableOverflow })
         });
     };
 }
